@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
-using System;
+﻿using System;
 using System.Net;
 using Autofac.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MyJetWallet.Sdk.Service;
 using MySettingsReader;
@@ -12,74 +12,69 @@ using Service.EmailSender.Settings;
 
 namespace Service.EmailSender
 {
-    public class Program
-    {
-        public const string SettingsFileName = ".myjetwallet";
+	public class Program
+	{
+		public const string SettingsFileName = ".myjeteducation";
 
-        public static SettingsModel Settings { get; private set; }
+		public static SettingsModel Settings { get; private set; }
 
-        public static ILoggerFactory LogFactory { get; private set; }
-        public static byte[] EmailKey { get; set; }
+		public static ILoggerFactory LogFactory { get; private set; }
 
-        public static Func<T> ReloadedSettings<T>(Func<SettingsModel, T> getter)
-        {
-            return () =>
-            {
-                var settings = SettingsReader.GetSettings<SettingsModel>(SettingsFileName);
-                var value = getter.Invoke(settings);
-                return value;
-            };
-        }
+		public static byte[] EmailKey { get; set; }
 
-        public static void Main(string[] args)
-        {
-            Console.Title = "MyJetEducation Service.EmailSender";
+		public static Func<T> ReloadedSettings<T>(Func<SettingsModel, T> getter) => () =>
+		{
+			var settings = SettingsReader.GetSettings<SettingsModel>(SettingsFileName);
+			return getter.Invoke(settings);
+		};
 
-            Settings = SettingsReader.GetSettings<SettingsModel>(SettingsFileName);
+		public static void Main(string[] args)
+		{
+			Console.Title = "MyJetEducation Service.EmailSender";
 
-            using var loggerFactory = LogConfigurator.ConfigureElk("MyJetEducation", Settings.SeqServiceUrl, Settings.ElkLogs);
+			Settings = SettingsReader.GetSettings<SettingsModel>(SettingsFileName);
 
-            var logger = loggerFactory.CreateLogger<Program>();
+			using ILoggerFactory loggerFactory = LogConfigurator.ConfigureElk("MyJetEducation", Settings.SeqServiceUrl, Settings.ElkLogs);
+			ILogger<Program> logger = loggerFactory.CreateLogger<Program>();
+			LogFactory = loggerFactory;
 
-            LogFactory = loggerFactory;
+			try
+			{
+				logger.LogInformation("Application is being started");
 
-            try
-            {
-                logger.LogInformation("Application is being started");
+				CreateHostBuilder(loggerFactory, args).Build().Run();
 
-                CreateHostBuilder(loggerFactory, args).Build().Run();
+				logger.LogInformation("Application has been stopped");
+			}
+			catch (Exception ex)
+			{
+				logger.LogCritical(ex, "Application has been terminated unexpectedly");
+			}
+		}
 
-                logger.LogInformation("Application has been stopped");
-            }
-            catch (Exception ex)
-            {
-                logger.LogCritical(ex, "Application has been terminated unexpectedly");
-            }
-        }
+		public static IHostBuilder CreateHostBuilder(ILoggerFactory loggerFactory, string[] args) =>
+			Host.CreateDefaultBuilder(args)
+				.UseServiceProviderFactory(new AutofacServiceProviderFactory())
+				.ConfigureWebHostDefaults(webBuilder =>
+				{
+					string httpPort = Environment.GetEnvironmentVariable("HTTP_PORT") ?? "8080";
+					string grpcPort = Environment.GetEnvironmentVariable("GRPC_PORT") ?? "80";
 
-        public static IHostBuilder CreateHostBuilder(ILoggerFactory loggerFactory, string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .UseServiceProviderFactory(new AutofacServiceProviderFactory())
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    var httpPort = Environment.GetEnvironmentVariable("HTTP_PORT") ?? "8080";
-                    var grpcPort = Environment.GetEnvironmentVariable("GRPC_PORT") ?? "80";
+					Console.WriteLine($"HTTP PORT: {httpPort}");
+					Console.WriteLine($"GRPC PORT: {grpcPort}");
 
-                    Console.WriteLine($"HTTP PORT: {httpPort}");
-                    Console.WriteLine($"GRPC PORT: {grpcPort}");
+					webBuilder.ConfigureKestrel(options =>
+					{
+						options.Listen(IPAddress.Any, int.Parse(httpPort), o => o.Protocols = HttpProtocols.Http1);
+						options.Listen(IPAddress.Any, int.Parse(grpcPort), o => o.Protocols = HttpProtocols.Http2);
+					});
 
-                    webBuilder.ConfigureKestrel(options =>
-                    {
-                        options.Listen(IPAddress.Any, int.Parse(httpPort), o => o.Protocols = HttpProtocols.Http1);
-                        options.Listen(IPAddress.Any, int.Parse(grpcPort), o => o.Protocols = HttpProtocols.Http2);
-                    });
-
-                    webBuilder.UseStartup<Startup>();
-                })
-                .ConfigureServices(services =>
-                {
-                    services.AddSingleton(loggerFactory);
-                    services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
-                });
-    }
+					webBuilder.UseStartup<Startup>();
+				})
+				.ConfigureServices(services =>
+				{
+					services.AddSingleton(loggerFactory);
+					services.AddSingleton(typeof (ILogger<>), typeof (Logger<>));
+				});
+	}
 }
