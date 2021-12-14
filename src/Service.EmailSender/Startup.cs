@@ -23,9 +23,7 @@ namespace Service.EmailSender
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.BindCodeFirstGrpc();
-
 			services.AddHostedService<ApplicationLifetimeManager>();
-
 			services.AddMyTelemetry("ED-", Program.Settings.ZipkinUrl);
 		}
 
