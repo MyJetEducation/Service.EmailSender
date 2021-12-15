@@ -27,18 +27,15 @@ namespace Service.EmailSender.Services
 
 			string email = request.Email;
 
-			var emailModel = new EmailModel
+			OperationResult<bool> sendingResult = await _emailSender.SendMailAsync(new EmailModel
 			{
 				To = email,
-				SendGridTemplateId = Program.Settings.SendGridTemplateId,
-				Subject = Program.Settings.Subject,
+				Subject = "Recovery Password",
 				Data = new
 				{
 					request.Hash
 				}
-			};
-
-			OperationResult<bool> sendingResult = await _emailSender.SendMailAsync(emailModel);
+			});
 
 			string emailMasked = email.Mask();
 
@@ -49,6 +46,34 @@ namespace Service.EmailSender.Services
 			}
 
 			_logger.LogInformation("Sent RecoveryPasswordEmail to {email}", emailMasked);
+			return CommonGrpcResponse.Success;
+		}
+
+		public async ValueTask<CommonGrpcResponse> SendRegistrationConfirmEmailAsync(RegistrationConfirmGrpcRequest request)
+		{
+			using Activity activity = MyTelemetry.StartActivity("Send Registration Confirm Email");
+
+			string email = request.Email;
+
+			OperationResult<bool> sendingResult = await _emailSender.SendMailAsync(new EmailModel
+			{
+				To = email,
+				Subject = "Registration Confirm",
+				Data = new
+				{
+					request.Hash
+				}
+			});
+
+			string emailMasked = email.Mask();
+
+			if (sendingResult.Error)
+			{
+				_logger.LogError("Unable to send RegistrationConfirmEmail to userId {email}. Error message: {errorMessage}", emailMasked, sendingResult.ErrorMessage);
+				return CommonGrpcResponse.Fail;
+			}
+
+			_logger.LogInformation("Sent RegistrationConfirmEmail to {email}", emailMasked);
 			return CommonGrpcResponse.Success;
 		}
 	}

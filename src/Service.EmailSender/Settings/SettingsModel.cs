@@ -17,13 +17,13 @@ namespace Service.EmailSender.Settings
 		[YamlProperty("EmailSender.SendGridSettingsApiKey")]
 		public string SendGridSettingsApiKey { get; set; }
 
-		[YamlProperty("EmailSender.SendGridTemplateId")]
-		public string SendGridTemplateId { get; set; }
-
-		[YamlProperty("EmailSender.Subject")]
-		public string Subject { get; set; }
-
 		[YamlProperty("EmailSender.From")]
 		public string From { get; set; }
+
+		[YamlProperty("EmailSender.KeyValueServiceUrl")]
+		public string KeyValueServiceUrl { get; set; }
+
+		[YamlProperty("EducationApi.UserInfoCrudServiceUrl")]
+		public string UserInfoCrudServiceUrl { get; set; }
 	}
 }
