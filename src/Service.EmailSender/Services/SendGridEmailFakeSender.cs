@@ -48,9 +48,14 @@ namespace Service.EmailSender.Services
 				}
 			});
 
-			_logger.LogDebug($"Email sended (fake), contents: {mailContents}");
+			bool success = response?.IsSuccess == true;
 
-			return await ValueTask.FromResult(new OperationResult<bool>(response.IsSuccess));
+			if (success)
+				_logger.LogDebug("Email sended (fake) to {email}, contents: {mailContents}", email, mailContents);
+			else
+				_logger.LogError("Error! While sending email (fake) to {email}, contents: {mailContents}", email, mailContents);
+
+			return new OperationResult<bool>(success);
 		}
 	}
 }
