@@ -1,26 +1,19 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Service.Core.Grpc.Models;
 using Service.EmailSender.Domain.Models;
-using Service.KeyValue.Grpc;
-using Service.KeyValue.Grpc.Models;
-using Service.UserInfo.Crud.Grpc;
-using Service.UserInfo.Crud.Grpc.Models;
 
 namespace Service.EmailSender.Services
 {
 	public class SendGridEmailFakeSender : ISendGridEmailSender
 	{
-		private readonly IKeyValueService _keyValueService;
-		private readonly IUserInfoService _userInfoService;
 		private readonly ILogger<SendGridEmailFakeSender> _logger;
+		private readonly IOperationsRepository _operationsRepository;
 
-		public SendGridEmailFakeSender(IKeyValueService keyValueService, ILogger<SendGridEmailFakeSender> logger, IUserInfoService userInfoService)
+		public SendGridEmailFakeSender(ILogger<SendGridEmailFakeSender> logger, IOperationsRepository operationsRepository)
 		{
-			_keyValueService = keyValueService;
 			_logger = logger;
-			_userInfoService = userInfoService;
+			_operationsRepository = operationsRepository;
 		}
 
 		public async ValueTask<OperationResult<bool>> SendMailAsync(EmailModel emailModel)
@@ -28,34 +21,12 @@ namespace Service.EmailSender.Services
 			string mailContents = JsonConvert.SerializeObject(emailModel);
 
 			string email = emailModel.To;
-			UserInfoResponse userInfo = await _userInfoService.GetUserInfoByLoginAsync(new UserInfoAuthRequest {UserName = email});
-			if (userInfo == null)
-			{
-				_logger.LogError("User with email {email} not found, email not sended.", email);
-				return await ValueTask.FromResult(new OperationResult<bool>(false));
-			}
 
-			CommonGrpcResponse response = await _keyValueService.Put(new ItemsPutGrpcRequest
-			{
-				UserId = userInfo.UserInfo.UserId,
-				Items = new[]
-				{
-					new KeyValueGrpcModel
-					{
-						Key = "email",
-						Value = mailContents
-					}
-				}
-			});
+			await _operationsRepository.Save(mailContents);
 
-			bool success = response?.IsSuccess == true;
+			_logger.LogDebug("Email sended (fake) to {email}, contents: {mailContents}", email, mailContents);
 
-			if (success)
-				_logger.LogDebug("Email sended (fake) to {email}, contents: {mailContents}", email, mailContents);
-			else
-				_logger.LogError("Error! While sending email (fake) to {email}, contents: {mailContents}", email, mailContents);
-
-			return new OperationResult<bool>(success);
+			return new OperationResult<bool>(true);
 		}
 	}
 }

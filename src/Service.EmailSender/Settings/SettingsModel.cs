@@ -20,10 +20,7 @@ namespace Service.EmailSender.Settings
 		[YamlProperty("EmailSender.From")]
 		public string From { get; set; }
 
-		[YamlProperty("EmailSender.KeyValueServiceUrl")]
-		public string KeyValueServiceUrl { get; set; }
-
-		[YamlProperty("EmailSender.UserInfoCrudServiceUrl")]
-		public string UserInfoCrudServiceUrl { get; set; }
+		[YamlProperty("EmailSender.PostgresConnectionString")]
+		public string PostgresConnectionString { get; set; }
 	}
 }

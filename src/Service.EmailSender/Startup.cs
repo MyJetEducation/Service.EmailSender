@@ -7,10 +7,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MyJetWallet.Sdk.GrpcSchema;
+using MyJetWallet.Sdk.Postgres;
 using MyJetWallet.Sdk.Service;
 using Prometheus;
 using Service.EmailSender.Grpc;
 using Service.EmailSender.Modules;
+using Service.EmailSender.Postgres;
 using Service.EmailSender.Services;
 using SimpleTrading.ServiceStatusReporterConnector;
 
@@ -25,6 +27,7 @@ namespace Service.EmailSender
 			services.BindCodeFirstGrpc();
 			services.AddHostedService<ApplicationLifetimeManager>();
 			services.AddMyTelemetry("ED-", Program.Settings.ZipkinUrl);
+			services.AddDatabase(DatabaseContext.Schema, Program.Settings.PostgresConnectionString, options => new DatabaseContext(options));
 		}
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

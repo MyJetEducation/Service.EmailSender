@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Service.EmailSender.Grpc\Service.EmailSender.Grpc.csproj" />
+    <ProjectReference Include="..\Service.EmailSender.Postgres\Service.EmailSender.Postgres.csproj" />
   </ItemGroup>
 
 </Project>
