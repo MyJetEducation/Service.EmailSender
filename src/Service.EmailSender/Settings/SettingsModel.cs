@@ -23,7 +23,7 @@ namespace Service.EmailSender.Settings
 		[YamlProperty("EmailSender.KeyValueServiceUrl")]
 		public string KeyValueServiceUrl { get; set; }
 
-		[YamlProperty("EducationApi.UserInfoCrudServiceUrl")]
+		[YamlProperty("EmailSender.UserInfoCrudServiceUrl")]
 		public string UserInfoCrudServiceUrl { get; set; }
 	}
 }
