@@ -12,13 +12,20 @@ namespace Service.EmailSender.Services
 	{
 		private readonly SendGridClient _client;
 
-		public SendGridEmailSender() => _client = new SendGridClient(Program.Settings.SendGridSettingsApiKey);
+		public SendGridEmailSender()
+		{
+			string sendGridSettingsApiKey = Program.ReloadedSettings(model => model.SendGridSettingsApiKey).Invoke();
+
+			_client = new SendGridClient(sendGridSettingsApiKey);
+		}
 
 		public async ValueTask<OperationResult<bool>> SendMailAsync(EmailModel emailModel)
 		{
 			try
 			{
-				var from = new OperationResult<string>(Program.Settings.From);
+				string fromString = Program.ReloadedSettings(model => model.From).Invoke();
+
+				var from = new OperationResult<string>(fromString);
 
 				if (from.Error)
 					return OperationResult<bool>.ErrorResult(from.ErrorMessage);
