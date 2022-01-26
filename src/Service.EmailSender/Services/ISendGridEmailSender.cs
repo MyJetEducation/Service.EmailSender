@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
+using Service.EmailSender.Models;
 
-namespace Service.EmailSender.Domain.Models
+namespace Service.EmailSender.Services
 {
 	public interface ISendGridEmailSender
 	{

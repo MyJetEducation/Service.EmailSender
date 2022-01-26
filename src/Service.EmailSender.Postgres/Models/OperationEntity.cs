@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Service.EmailSender.Domain.Models
+﻿namespace Service.EmailSender.Postgres.Models
 {
 	public class OperationEntity
 	{

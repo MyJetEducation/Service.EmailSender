@@ -1,6 +1,4 @@
 ﻿using Autofac;
-using Service.EmailSender.Domain;
-using Service.EmailSender.Domain.Models;
 using Service.EmailSender.Services;
 
 namespace Service.EmailSender.Modules

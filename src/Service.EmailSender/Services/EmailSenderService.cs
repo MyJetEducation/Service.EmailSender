@@ -2,11 +2,11 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MyJetWallet.Sdk.Service;
-using Service.Core.Domain.Extensions;
-using Service.Core.Grpc.Models;
-using Service.EmailSender.Domain.Models;
+using Service.Core.Client.Extensions;
+using Service.Core.Client.Models;
 using Service.EmailSender.Grpc;
 using Service.EmailSender.Grpc.Models;
+using Service.EmailSender.Models;
 
 namespace Service.EmailSender.Services
 {

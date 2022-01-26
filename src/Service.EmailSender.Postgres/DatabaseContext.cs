@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyJetWallet.Sdk.Postgres;
 using MyJetWallet.Sdk.Service;
-using Service.EmailSender.Domain.Models;
+using Service.EmailSender.Postgres.Models;
 
 namespace Service.EmailSender.Postgres
 {

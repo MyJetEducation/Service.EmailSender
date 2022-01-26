@@ -2,10 +2,12 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Service.EmailSender.Domain.Models;
+using Service.EmailSender.Models;
 using Service.EmailSender.Postgres;
+using Service.EmailSender.Postgres.Models;
+using Service.EmailSender.Postgres.Services;
 
-namespace Service.EmailSender.Domain
+namespace Service.EmailSender.Services
 {
 	public class OperationsRepository : IOperationsRepository
 	{
