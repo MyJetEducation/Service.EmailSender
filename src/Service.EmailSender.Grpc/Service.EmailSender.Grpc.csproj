@@ -5,14 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Destructurama.Attributed" Version="3.0.0" />
-    <PackageReference Include="MyJetEducation.Service.Core.Client" Version="1.0.26" />
-    <PackageReference Include="SimpleTrading.Common" Version="1.0.32" />
-    <PackageReference Include="System.ServiceModel.Primitives" Version="4.9.0" />
+    <PackageReference PrivateAssets="All" Include="MyJetEducation.Service.Core.Client" Version="1.0.19" />
+    <PackageReference PrivateAssets="All" Include="SimpleTrading.Common" Version="1.0.32" />
+    <PackageReference PrivateAssets="All" Include="System.ServiceModel.Primitives" Version="4.9.0" />
   </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Service.EmailSender.Domain.Models\Service.EmailSender.Domain.Models.csproj" />
-  </ItemGroup>
-
 </Project>
