@@ -10,8 +10,11 @@ namespace Service.EmailSender.Grpc
 	{
 		[OperationContract]
 		ValueTask<CommonGrpcResponse> SendRecoveryPasswordEmailAsync(RecoveryInfoGrpcRequest request);
-		
+
 		[OperationContract]
 		ValueTask<CommonGrpcResponse> SendRegistrationConfirmEmailAsync(RegistrationConfirmGrpcRequest request);
+
+		[OperationContract]
+		ValueTask<CommonGrpcResponse> SendChangeEmailAsync(ChangeEmailGrpcRequest request);
 	}
 }

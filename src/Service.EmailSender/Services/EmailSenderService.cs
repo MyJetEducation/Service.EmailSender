@@ -23,7 +23,7 @@ namespace Service.EmailSender.Services
 
 		public async ValueTask<CommonGrpcResponse> SendRecoveryPasswordEmailAsync(RecoveryInfoGrpcRequest request)
 		{
-			using Activity activity = MyTelemetry.StartActivity("Send Recover Password Email");
+			using Activity activity = MyTelemetry.StartActivity("Send recovery password message");
 
 			string email = request.Email;
 
@@ -41,17 +41,17 @@ namespace Service.EmailSender.Services
 
 			if (sendingResult.Error)
 			{
-				_logger.LogError("Unable to send RecoveryPasswordEmail to userId {email}. Error message: {errorMessage}", emailMasked, sendingResult.ErrorMessage);
+				_logger.LogError("Unable to send recovery password message to: {email}. Error message: {errorMessage}", emailMasked, sendingResult.ErrorMessage);
 				return CommonGrpcResponse.Fail;
 			}
 
-			_logger.LogInformation("Sent RecoveryPasswordEmail to {email}", emailMasked);
+			_logger.LogInformation("Sent recovery password message to {email}", emailMasked);
 			return CommonGrpcResponse.Success;
 		}
 
 		public async ValueTask<CommonGrpcResponse> SendRegistrationConfirmEmailAsync(RegistrationConfirmGrpcRequest request)
 		{
-			using Activity activity = MyTelemetry.StartActivity("Send Registration Confirm Email");
+			using Activity activity = MyTelemetry.StartActivity("Send registration confirm message");
 
 			string email = request.Email;
 
@@ -69,11 +69,39 @@ namespace Service.EmailSender.Services
 
 			if (sendingResult.Error)
 			{
-				_logger.LogError("Unable to send RegistrationConfirmEmail to userId {email}. Error message: {errorMessage}", emailMasked, sendingResult.ErrorMessage);
+				_logger.LogError("Unable to send registration confirm message to: {email}. Error message: {errorMessage}", emailMasked, sendingResult.ErrorMessage);
 				return CommonGrpcResponse.Fail;
 			}
 
-			_logger.LogInformation("Sent RegistrationConfirmEmail to {email}", emailMasked);
+			_logger.LogInformation("Sent registration confirm message to {email}", emailMasked);
+			return CommonGrpcResponse.Success;
+		}
+
+		public async ValueTask<CommonGrpcResponse> SendChangeEmailAsync(ChangeEmailGrpcRequest request)
+		{
+			using Activity activity = MyTelemetry.StartActivity("Send change email message");
+
+			string email = request.Email;
+
+			OperationResult<bool> sendingResult = await _emailSender.SendMailAsync(new EmailModel
+			{
+				To = email,
+				Subject = "Change Email",
+				Data = new
+				{
+					request.Hash
+				}
+			});
+
+			string emailMasked = email.Mask();
+
+			if (sendingResult.Error)
+			{
+				_logger.LogError("Unable to send change email message to: {email}. Error message: {errorMessage}", emailMasked, sendingResult.ErrorMessage);
+				return CommonGrpcResponse.Fail;
+			}
+
+			_logger.LogInformation("Sent change email message to {email}", emailMasked);
 			return CommonGrpcResponse.Success;
 		}
 	}
