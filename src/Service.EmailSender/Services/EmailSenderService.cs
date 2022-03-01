@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using MyJetWallet.Sdk.Service;
 using Service.Core.Client.Extensions;
 using Service.Core.Client.Models;
+using Service.EmailSender.Domain.Models;
 using Service.EmailSender.Grpc;
 using Service.EmailSender.Grpc.Models;
 using Service.EmailSender.Models;
@@ -31,9 +32,9 @@ namespace Service.EmailSender.Services
 			{
 				To = email,
 				Subject = "Recovery Password",
-				Data = new
+				Data = new HashEmailDataModel
 				{
-					request.Hash
+					Hash = request.Hash
 				}
 			});
 
@@ -59,9 +60,9 @@ namespace Service.EmailSender.Services
 			{
 				To = email,
 				Subject = "Registration Confirm",
-				Data = new
+				Data = new HashEmailDataModel
 				{
-					request.Hash
+					Hash = request.Hash
 				}
 			});
 
@@ -87,9 +88,9 @@ namespace Service.EmailSender.Services
 			{
 				To = email,
 				Subject = "Change Email",
-				Data = new
+				Data = new HashEmailDataModel
 				{
-					request.Hash
+					Hash = request.Hash
 				}
 			});
 

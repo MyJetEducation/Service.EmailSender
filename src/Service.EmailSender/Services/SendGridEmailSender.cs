@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SendGrid;
 using SendGrid.Helpers.Mail;
+using Service.EmailSender.Domain.Models;
 using Service.EmailSender.Models;
 
 namespace Service.EmailSender.Services

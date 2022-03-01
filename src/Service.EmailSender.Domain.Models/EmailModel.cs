@@ -1,4 +1,4 @@
-﻿namespace Service.EmailSender.Models
+﻿namespace Service.EmailSender.Domain.Models
 {
     public class EmailModel
     {
