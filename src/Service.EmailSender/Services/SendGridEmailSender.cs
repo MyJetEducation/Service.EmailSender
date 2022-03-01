@@ -11,29 +11,24 @@ namespace Service.EmailSender.Services
 {
 	public class SendGridEmailSender : ISendGridEmailSender
 	{
-		private readonly SendGridClient _client;
+		private readonly ISendGridClient _sendGridClient;
+		private readonly ISettingsManager _settingsManager;
 
-		public SendGridEmailSender()
+		public SendGridEmailSender(ISendGridClient sendGridClient, ISettingsManager settingsManager)
 		{
-			string sendGridSettingsApiKey = Program.ReloadedSettings(model => model.SendGridSettingsApiKey).Invoke();
-
-			_client = new SendGridClient(sendGridSettingsApiKey);
+			_sendGridClient = sendGridClient;
+			_settingsManager = settingsManager;
 		}
 
 		public async ValueTask<OperationResult<bool>> SendMailAsync(EmailModel emailModel)
 		{
 			try
 			{
-				string fromString = Program.ReloadedSettings(model => model.From).Invoke();
-
-				var from = new OperationResult<string>(fromString);
-
-				if (from.Error)
-					return OperationResult<bool>.ErrorResult(from.ErrorMessage);
+				string fromString = _settingsManager.GetValue(model => model.From);
 
 				var msg = new SendGridMessage
 				{
-					From = new EmailAddress(from.Value, emailModel.Subject),
+					From = new EmailAddress(fromString, emailModel.Subject),
 					Subject = emailModel.Subject,
 					TemplateId = emailModel.SendGridTemplateId
 				};
@@ -41,7 +36,7 @@ namespace Service.EmailSender.Services
 				msg.AddTo(emailModel.To);
 				msg.SetTemplateData(emailModel.Data);
 
-				Response response = await _client.SendEmailAsync(msg);
+				Response response = await _sendGridClient.SendEmailAsync(msg);
 
 				if (response.StatusCode != HttpStatusCode.Accepted)
 					return OperationResult<bool>.ErrorResult("SendGrid returned: " + JsonConvert.SerializeObject(response));

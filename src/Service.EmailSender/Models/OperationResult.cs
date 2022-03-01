@@ -11,7 +11,7 @@
 			Value = data;
 		}
 
-		public static OperationResult<bool> ErrorResult(string message) => new OperationResult<bool> {ErrorMessage = message, Value = false};
+		public static OperationResult<bool> ErrorResult(string message) => new() {ErrorMessage = message, Value = false};
 
 		public bool Error => ErrorMessage != null;
 		public string ErrorMessage { get; set; }

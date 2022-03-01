@@ -21,6 +21,7 @@ namespace TestApp
 
 			await client.SendRecoveryPasswordEmailAsync(new RecoveryInfoGrpcRequest {Email = "some@email1", Hash = "some_hash2"});
 			await client.SendRegistrationConfirmEmailAsync(new RegistrationConfirmGrpcRequest {Email = "some@email2", Hash = "some_hash2"});
+			await client.SendChangeEmailAsync(new ChangeEmailGrpcRequest {Email = "some@email2", Hash = "some_hash2"});
 
 			Console.WriteLine("End");
 			Console.ReadLine();

@@ -22,12 +22,6 @@ namespace Service.EmailSender
 
 		public static byte[] EmailKey { get; set; }
 
-		public static Func<T> ReloadedSettings<T>(Func<SettingsModel, T> getter) => () =>
-		{
-			var settings = SettingsReader.GetSettings<SettingsModel>(SettingsFileName);
-			return getter.Invoke(settings);
-		};
-
 		public static void Main(string[] args)
 		{
 			Console.Title = "MyJetEducation Service.EmailSender";
