@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MyJetEducation.Service.Core.Client" Version="1.0.32" />
+    <PackageReference Include="MyJetEducation.Service.Core.Client" Version="1.0.33" />
     <ProjectReference Include="..\Service.EmailSender.Domain\Service.EmailSender.Domain.csproj" />
     <ProjectReference Include="..\Service.EmailSender.Grpc\Service.EmailSender.Grpc.csproj" />
     <ProjectReference Include="..\Service.EmailSender.Postgres\Service.EmailSender.Postgres.csproj" />
